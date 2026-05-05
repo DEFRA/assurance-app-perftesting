@@ -1,4 +1,4 @@
-# cdp-perf-test-suite-template
+# assurance-app-perftesting
 
 A JMeter based test runner for the CDP Platform.
 
