@@ -27,12 +27,27 @@ SERVICE_ENDPOINT=${SERVICE_ENDPOINT:-service-name.${ENVIRONMENT}.cdp-int.defra.c
 SERVICE_PORT=${SERVICE_PORT:-443}
 SERVICE_URL_SCHEME=${SERVICE_URL_SCHEME:-https}
 
+
+PROXY_HOST=""
+PROXY_PORT=""
+if [ -n "${HTTP_PROXY}" ]; then
+  # Extract host and port from HTTP_PROXY (format: http://host:port or https://host:port)
+  PROXY_HOST=$(echo "${HTTP_PROXY}" | sed -E 's|^https?://([^:/]+).*|\1|')
+  PROXY_PORT=$(echo "${HTTP_PROXY}" | sed -E 's|^https?://[^:]+:([0-9]+).*|\1|')
+
+  if [ "${PROXY_PORT}" = "${HTTP_PROXY}" ]; then
+    PROXY_PORT=""
+  fi
+  echo "Using proxy: ${PROXY_HOST}:${PROXY_PORT}"
+fi
+
 # Run the test suite
 jmeter -n -t ${SCENARIOFILE} -e -l "${REPORTFILE}" -o ${JM_REPORTS} -j ${LOGFILE} -f \
 -Jenv="${ENVIRONMENT}" \
 -Jdomain="${SERVICE_ENDPOINT}" \
 -Jport="${SERVICE_PORT}" \
--Jprotocol="${SERVICE_URL_SCHEME}"
+-Jprotocol="${SERVICE_URL_SCHEME}" \
+-Jhttp_proxy="${HTTP_PROXY}"
 
 # Publish the results into S3 so they can be displayed in the CDP Portal
 if [ -n "$RESULTS_OUTPUT_S3_PATH" ]; then
