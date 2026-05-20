@@ -47,7 +47,10 @@ jmeter -n -t ${SCENARIOFILE} -e -l "${REPORTFILE}" -o ${JM_REPORTS} -j ${LOGFILE
 -Jdomain="${SERVICE_ENDPOINT}" \
 -Jport="${SERVICE_PORT}" \
 -Jprotocol="${SERVICE_URL_SCHEME}" \
--Jhttp_proxy="${HTTP_PROXY}"
+-Dhttp.proxyHost="${PROXY_HOST}" \
+-Dhttp.proxyPort="${PROXY_PORT}" \
+-Dhttps.proxyHost="${PROXY_HOST}" \
+-Dhttps.proxyPort="${PROXY_PORT}"
 
 # Publish the results into S3 so they can be displayed in the CDP Portal
 if [ -n "$RESULTS_OUTPUT_S3_PATH" ]; then
